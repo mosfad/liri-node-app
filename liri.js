@@ -34,7 +34,14 @@ inquirer.prompt([
         //If user requested a song, then use spotify to get info.
         spotify.search({ type: 'track', query: queryTerm(user.searchRequest) })
         .then(function(response) {
-            console.log(response.tracks.items[1]);
+            var data = response.tracks.items[0];
+            //console.log(data.artists);
+            console.log("Artist(s): " + data.artists[0].name);
+            console.log("Song: " + data.name);
+            console.log("Preview of song: " + data.preview_url);
+            console.log("Song's album: " + data.album.name);
+
+
         })
         .catch(function(err) {
             console.log(err);
