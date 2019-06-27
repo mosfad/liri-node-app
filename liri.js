@@ -4,8 +4,43 @@ var keys = require("./keys.js");
 var Spotify = require("node-spotify-api");
 var axios = require("axios")
 var moment = require("moment");
-var 
+var inquirer = require("inquirer");
 
 
 
 var spotify = new Spotify(keys.spotify);
+//key id should be spotify.id(see keys.js)
+//key secret should be spotify.secret(also see keys.js)
+//Get key from Bandsintown to create queryURL
+//----------------------var bandsInTown = new BandsInTown(keys.bandsInTown);
+//Get key from OMDb to create queryURL
+//----------------------var omdb = new Omdb(keys.omdb);
+
+function queryTerm(userInput) {
+    //Look for index of first space
+    var indFirstSpace = userInput.indexOf(" ");
+    return userInput.substring(indFirstSpace + 1);
+}
+
+inquirer.prompt([
+    {
+        type: "input",
+        name: "searchRequest",
+        message: "Please enter appropriate request for your search preference "
+    }
+    
+]).then(function(user) {
+    if (user.searchRequest.includes("spotify-this-song")) {
+        //If user requested a song, then use spotify to get info.
+        spotify.search({ type: 'track', query: queryTerm(user.searchRequest) })
+        .then(function(response) {
+            console.log(response.tracks.items[1]);
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+    }
+
+
+})
+
