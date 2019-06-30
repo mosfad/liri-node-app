@@ -59,35 +59,34 @@ function readText() {
 var allSearches = function () {
     if (commandByUser === "spotify-this-song") {
         if (searchParameter === "") {
-            //NOT SURE IF LOGIC HERE IS CORRECT OR WRONG!
+            //build search parameters from user input. Note that user may or may not enter a song name.
             createSearchParameter(process.argv);
         }
         //if user doesn't enter a song, use The Sign by Aces of Base.
         if (searchParameter === "") {
             searchParameter = "The Sign";
         }
-        //console.log("My search parameter is: " + searchParameter);
         //If user requested a song, then use spotify API to get song info.
         spotify.search({ type: 'track', query: searchParameter})
         .then(function(response) {
-            //console.log(response.tracks.items[0]);
             var targetItem;
             //loop to pick the correct song from the options
             for (var i = 0; i < response.tracks.items.length; i++) {
-                //IF STATEMENT WASN'T EXECUTING BECAUSE OF CASE OF LETTER.
+                //SET THE VALUE OF TEST VARIABLES TO LOWERCASE TO FACILITATE TEST CONDITIONS.
                 if (searchParameter.toLowerCase() === response.tracks.items[i].name.toLowerCase()) { 
                     targetItem = response.tracks.items[i];
                     break;           
                 }
             }
-            //console.log("==================================================================================================================");
-            console.log("Artist(s): " + targetItem.artists[0].name);
-            console.log("Song: " + targetItem.name);
-            console.log("Preview of song: " + targetItem.preview_url);
-            console.log("Song's album: " + targetItem.album.name);
-            //console.log("==================================================================================================================");
-
-
+            var showString = "Artist(s): " + targetItem.artists[0].name + "\n" + "Song: " + targetItem.name + "\n" + "Preview of song: " + targetItem.preview_url + "\n"
+            + "Song's album: " + targetItem.album.name;
+            //append and store output in log.txt
+            fs.appendFile('log.txt', showString, function (err) {
+                if (err) throw err;
+                console.log('Saved!');
+            });
+            //log to the terminal.
+            console.log(showString);
         })
         .catch(function(err) {
             console.log(err);
@@ -103,17 +102,16 @@ var allSearches = function () {
         axios.get("https://www.omdbapi.com/?t=" + searchParameter + "&apikey=" + keys.omdb.secret)
         .then(function (response) {
             //handle success
-            //console.log(response.data);
-            console.log("==================================================================================================================");
-            console.log("Movie Title: " + response.data.Title);
-            console.log("Release Year: " + response.data.Year);
-            console.log("IMDB Rating: " + response.data.imdbRating);
-            console.log("Rotten Tomatoes Rating: " + response.data.Ratings[1].Value); //NEED TO FIGURE OUT HOW TO EXTRACT ROTTEN TOMATOES RATINGS!!!
-            console.log("Country Produced: " + response.data.Country);
-            console.log("Language: " + response.data.Language);
-            console.log("Plot: " + response.data.Plot);
-            console.log("Actors: " + response.data.Actors);
-            console.log("==================================================================================================================");
+            var showString = "Movie Title: " + response.data.Title + "\n" + "Release Year: " + response.data.Year + "\n" + "IMDB Rating: " + response.data.imdbRating + "\n"
+            + "Rotten Tomatoes Rating: " + response.data.Ratings[1].Value + "\n" + "Country Produced: " + response.data.Country + "\n" + "Language: " + response.data.Language 
+            + "\n" + "Plot: " + response.data.Plot + "\n" + "Actors: " + response.data.Actors; 
+            //append and store output in log.txt
+            fs.appendFile('log.txt', showString, function (err) {
+                if (err) throw err;
+                console.log('Saved!');
+            });
+            //log to the terminal.
+            console.log(showString);
         }) 
         .catch(function (error) {
             //handle error
@@ -126,18 +124,23 @@ var allSearches = function () {
         axios.get("https://rest.bandsintown.com/artists/" + searchParameter + "/events?app_id=" + keys.bandsInTown.secret)
         .then(function (response) {
             // handle success
-            console.log(response.data);
-            console.log("==================================================================================================================");
-            console.log("Name of Venue: " + response.data[0].venue.name);
-            if (response.data[0].venue.region === "") {
-                console.log("Location of Venue: " + response.data[0].venue.city + ", " +  response.data[0].venue.country );
+            var showString = "Name of Venue: " + response.data[0].venue.name + "\n" ;
+            //console.log("Name of Venue: " + response.data[0].venue.name);
+            if (response.data[0].venue.region === "") {           
+                showString += "Location of Venue: " + response.data[0].venue.city + ", " +  response.data[0].venue.country + "\n";
             }
             else {
-                console.log("Location of Venue: " + response.data[0].venue.city + ", " +  response.data[0].venue.region + ", " +  response.data[0].venue.country );
+                showString += "Location of Venue: " + response.data[0].venue.city + ", " +  response.data[0].venue.region + ", " +  response.data[0].venue.country + "\n";
             }
             var convDate = moment(response.data[0].datetime, moment.ISO_8601);
-            console.log("Date of Event(MM/DD/YYYY): " + convDate.format("MM/DD/YYYY"));   //use moment.js for this
-            console.log("==================================================================================================================");
+            showString += "Date of Event(MM/DD/YYYY): " + convDate.format("MM/DD/YYYY");
+            //append and store output in log.txt
+            fs.appendFile('log.txt', showString, function (err) {
+                if (err) throw err;
+                console.log('Saved!');
+            });
+            //log to the terminal.
+            console.log(showString);
         })
         .catch(function (error) {
             // handle error
@@ -147,6 +150,7 @@ var allSearches = function () {
     }
 }
 
+//call program if to perform searches
 if (commandByUser === "do-what-it-says") {
     readText();
 }
