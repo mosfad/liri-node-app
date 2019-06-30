@@ -37,21 +37,15 @@ function readText() {
         }
       
         // We will then print the contents of data
-        console.log(data);
+        //console.log(data);
         // Then split it by commas (to make it more readable)
         var dataArr = data.split(",");
-      
-        // We will then re-display the content as an array for later use.
-        //console.log(dataArr);
-        //console.log(dataArr[1].trim());
         searchParameter = dataArr[1].trim();
         searchParameter = searchParameter.substring(1, searchParameter.length - 1);
         //console.log("The length of the search parameter is " + searchParameter.length);
         commandByUser = dataArr[0];
-        console.log(searchParameter);
-        console.log(commandByUser);
-        //dataArr[0] = commandByUser;
-        //dataArr[1] = searchParameter;
+        //console.log(searchParameter);
+        //console.log(commandByUser);
         allSearches();
       });
 }
